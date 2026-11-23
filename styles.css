@@ -127,7 +127,6 @@ video { background: #191720; }
 .hardware-video, .demo-videos figure { border-radius: 12px; border: 1px solid var(--line); overflow: hidden; background: #fcfbfe; }
 .hardware-video video { width: 100%; aspect-ratio: 840 / 352; }
 .benchmark-videos video { aspect-ratio: var(--rollout-ratio, 1); }
-#robomme-demos details { --rollout-ratio: 512 / 560; }
 #rmbench-demos { --rollout-ratio: 4 / 3; }
 .hardware-video figcaption, .demo-videos figcaption, .video-label { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 9px; padding: 10px 12px; }
 .hardware-video figcaption span, .video-label .mono, .demo-videos figcaption span { font-size: .77rem; color: var(--muted); }

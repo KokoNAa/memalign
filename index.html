@@ -12,7 +12,7 @@
   <meta property="og:image" content="https://kokonaa.github.io/memalign/assets/scene-handover.jpg">
   <title>MemAlign: Memory–Action Alignment for Vision-Language-Action Models</title>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=project">
-  <link rel="stylesheet" href="styles.css?v=paper-code">
+  <link rel="stylesheet" href="styles.css?v=binfill">
   <script src="app.js?v=diagnostic" defer></script>
 </head>
 <body>
@@ -152,7 +152,7 @@
         <nav class="gallery-nav" aria-label="Demo collections">
           <a href="#real-robot"><span>PiPER-X</span><small>Real robot</small></a>
           <a href="#demos"><span>MIKASA-Robo</span><small>History swaps</small></a>
-          <a href="#robomme-demos"><span>RoboMME</span><small>Matched scenes</small></a>
+          <a href="#robomme-demos"><span>RoboMME</span><small>BinFill comparison</small></a>
           <a href="#rmbench-demos"><span>RMBench</span><small>Setup validation</small></a>
         </nav>
         <section id="real-robot" class="gallery-panel" aria-labelledby="real-robot-title">
@@ -198,9 +198,8 @@
       <div class="demo-caption"><p id="demo-explanation" aria-live="polite">Original history specifies target 1. MemAlign completes object 1 only; the baseline completes object 0.</p></div><p class="demo-footnote">In this matched scene (seed 2028500000), current RGB and proprioception stay fixed at handover across all six clips.</p>
         </section>
         <section id="robomme-demos" class="gallery-panel" aria-labelledby="robomme-demo-title">
-          <h3 id="robomme-demo-title">Success and failure on RoboMME</h3>
-          <p class="gallery-intro">Released MemER and a pilot counterfactual adaptation start from the same scene and share the same low-level policy in each pair.</p>
-      <h4>BinFill</h4>
+          <h3 id="robomme-demo-title">BinFill on RoboMME</h3>
+          <p class="gallery-intro">Released MemER and a pilot counterfactual adaptation start from the same scene and share the same low-level policy.</p>
       <p class="benchmark-description">Place a green block in the bin, then press stop. The adapted policy finishes both steps in this scene.</p>
       <div class="benchmark-videos">
         <figure class="hardware-video">
@@ -212,20 +211,6 @@
           <figcaption><strong>MemER with pilot CF adaptation</strong><span>Successful</span></figcaption>
         </figure>
       </div>
-      <details class="extra-recordings">
-        <summary>SwingXtimes · Regression case</summary>
-        <p class="benchmark-description">Move the block right and left twice, then press the stop button. Released MemER completes the sequence. The adapted policy repeats an earlier counting subgoal and fails to finish.</p>
-        <div class="benchmark-videos">
-          <figure class="hardware-video">
-            <video controls playsinline preload="none" poster="assets/benchmarks/robomme-swingxtimes-released.jpg" aria-label="RoboMME SwingXtimes, released MemER, successful rollout"><source src="assets/benchmarks/robomme-swingxtimes-released.mp4" type="video/mp4"></video>
-            <figcaption><strong>Released MemER</strong><span>Successful</span></figcaption>
-          </figure>
-          <figure class="hardware-video">
-            <video controls playsinline preload="none" poster="assets/benchmarks/robomme-swingxtimes-cf.jpg" aria-label="RoboMME SwingXtimes, pilot counterfactual adaptation, unsuccessful rollout"><source src="assets/benchmarks/robomme-swingxtimes-cf.mp4" type="video/mp4"></video>
-            <figcaption><strong>MemER with pilot CF adaptation</strong><span>Unsuccessful</span></figcaption>
-          </figure>
-        </div>
-      </details>
         </section>
         <section id="rmbench-demos" class="gallery-panel" aria-labelledby="rmbench-demo-title">
           <h3 id="rmbench-demo-title">RMBench setup validation</h3>
