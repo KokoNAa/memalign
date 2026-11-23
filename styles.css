@@ -62,6 +62,9 @@ video { background: #191720; }
 .project-authors li { white-space: nowrap; }
 .project-authors sup { margin-left: .15em; }
 .project-affiliations { gap: 4px 18px; margin: 10px auto 0; color: var(--muted); font-size: .875rem; }
+.project-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 20px; }
+.project-actions .button { min-width: 84px; background: var(--card); color: var(--ink); }
+.project-actions .button:disabled { border-color: var(--line); color: var(--muted); cursor: default; }
 .project-intro sup { color: var(--accent-dark); font-weight: 700; }
 
 .hero { display: grid; grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); column-gap: clamp(36px, 5vw, 78px); align-items: center; padding-block: clamp(30px, 4.5vw, 54px) clamp(36px, 5vw, 64px); }
