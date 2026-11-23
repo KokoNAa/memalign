@@ -112,14 +112,14 @@
     <section id="method" class="section method-section" aria-labelledby="method-title">
       <div class="container">
         <div class="section-heading">
-          <h2 id="method-title">How MemAlign teaches the robot</h2>
-          <p>MemAlign starts with a robot policy that already knows how to reach and teaches it where to reach when the earlier cue changes.</p>
+          <h2 id="method-title">The three components of MemAlign</h2>
+          <p>MemAlign teaches the robot to use a remembered cue to reach for the right block.</p>
         </div>
         <div class="method-contents">
           <ol class="method-steps" role="list">
-            <li><h3>Show two versions of the same task</h3><p>Keep the table, instruction and starting pose fixed. Change the earlier cue and show the correct reach for each color.</p></li>
-            <li><h3>Let the remembered cue steer the reach</h3><p>Keep the robot’s existing movement model fixed. Train a small add-on that uses the remembered cue to adjust how the robot moves.</p></li>
-            <li><h3>Check where the block is now</h3><p>For the color tasks, an extra step uses the current camera view to locate the matching block and refine the reach.</p></li>
+            <li><h3>Counterfactual supervision</h3><p>During training, we show the correct reach for each earlier cue while keeping the current scene, instruction, and starting pose fixed.</p></li>
+            <li><h3>History-aware low-rank modulation</h3><p>When the robot acts, a small controller uses its memory to adjust the action network. A different remembered cue can steer the reach to a different block.</p></li>
+            <li><h3>Visual rebinding (optional)</h3><p>In tasks such as RememberColor, the robot matches the remembered visual cue to the current camera view. It uses the block’s estimated position to refine the reach.</p></li>
           </ol>
           <div class="training-example">
             <h3>A training pair</h3>
