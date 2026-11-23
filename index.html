@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf9f6">
+  <meta name="description" content="We test whether memory-augmented robot policies follow a changed cue when the current scene stays the same. See what fails and how MemAlign addresses it.">
+  <meta property="og:title" content="MemAlign: Memory–Action Alignment for Vision-Language-Action Models">
+  <meta property="og:description" content="Change the earlier cue, keep the current scene fixed, and see which target a robot policy chooses.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kokonaa.github.io/memalign/">
+  <meta property="og:image" content="https://kokonaa.github.io/memalign/assets/scene-handover.jpg">
+  <title>MemAlign: Memory–Action Alignment for Vision-Language-Action Models</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=project">
+  <link rel="stylesheet" href="styles.css?v=diagnostic">
+  <script src="app.js?v=diagnostic" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <nav class="container site-nav" aria-label="Main navigation">
+      <a class="brand" href="#main"><img src="assets/favicon.svg?v=project" width="32" height="32" alt="">MemAlign</a>
+      <div class="nav-links">
+        <a href="#idea">Problem</a>
+        <a href="#method">Method</a>
+        <a href="#watch">Demos</a>
+        <a href="#results">Results</a>
+      </div>
+    </nav>
+  </header>
+  <main id="main">
+    <section class="project-intro container" aria-labelledby="project-title">
+      <h1 id="project-title"><span>MemAlign:</span> Memory–Action Alignment for Vision-Language-Action Models</h1>
+      <ul class="project-authors" role="list" aria-label="Authors">
+        <li>Qinfeng Feng<sup>1</sup></li>
+        <li>Jie Liu<sup>2</sup></li>
+        <li>Xuechun Luo<sup>3</sup></li>
+        <li>Xuetong Jing<sup>4</sup></li>
+        <li>Qinzheng Zhou<sup>1</sup></li>
+        <li>Joaquin Vanschoren<sup>2</sup></li>
+      </ul>
+      <ul class="project-affiliations" role="list" aria-label="Affiliations">
+        <li><sup>1</sup> University of Hong Kong</li>
+        <li><sup>2</sup> Eindhoven University of Technology</li>
+        <li><sup>3</sup> Facebook</li>
+        <li><sup>4</sup> Xi'an Jiaotong University</li>
+      </ul>
+    </section>
+    <section id="idea" class="hero container" aria-labelledby="problem-title">
+      <div class="hero-copy" id="abstract">
+        <h2 id="problem-title">Which block should the robot touch?</h2>
+        <p class="hero-description">A robot sees a color cue and must touch the matching block after the cue disappears. When it’s time to move, the table looks the same whether the cue was green or blue.</p>
+        <p class="hero-description">Existing memory-augmented vision-language-action (VLA) models can keep reaching for the same block or switch to the wrong one. We call this gap between the supplied history and the chosen action <strong>memory–action misalignment</strong>.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#diagnostic">See how we tested it <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="visual-top">
+          <h3>Try the test on MemoryVLA</h3>
+          <p>Pick a cue. In this scene, MemoryVLA reaches for red with either the green or the blue cue.</p>
+        </div>
+        <div class="history-switch" role="group" aria-label="Choose the earlier color cue">
+          <button type="button" data-history="original" aria-pressed="true"><span class="color-chip green" aria-hidden="true"></span>Green cue</button>
+          <button type="button" data-history="replaced" aria-pressed="false"><span class="color-chip blue" aria-hidden="true"></span>Blue cue</button>
+          <button type="button" data-history="erased" aria-pressed="false">No cue</button>
+        </div>
+        <div class="hero-video-frame">
+          <video id="hero-video" autoplay muted loop playsinline preload="auto" poster="assets/scene-handover.jpg" aria-label="Recorded RememberColor3 diagnostic with released MemoryVLA">
+            <source src="assets/baseline-original.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="visual-outcome">
+          <div class="visual-targets" aria-live="polite">
+            <span id="hero-target">Correct target <strong>Green block</strong></span>
+            <span>MemoryVLA <strong>Red block</strong></span>
+          </div>
+          <button id="hero-playback" type="button" aria-label="Pause simulation video">Pause</button>
+        </div>
+        <p class="hero-video-note">One recorded RememberColor3 scene from MIKASA-Robo</p>
+      </div>
+    </section>
+
+    <section id="diagnostic" class="container diagnostic-section" aria-labelledby="diagnostic-title">
+      <div class="section-heading">
+        <h2 id="diagnostic-title">We changed the history and reran the scene</h2>
+        <p>When the robot was allowed to act, the camera view, instruction, and robot pose were identical. We ran the same model with two valid histories, each pointing to a different target, and checked which target it acted on.</p>
+      </div>
+      <div class="diagnostic-grid">
+        <article class="diagnostic-card">
+          <h3>MemoryVLA <span>MIKASA-Robo</span></h3>
+          <strong class="diagnostic-number">11%</strong>
+          <p>Reached only the new target in 22 of 200 runs after the history changed, across four tasks.</p>
+        </article>
+        <article class="diagnostic-card">
+          <h3>MME-VLA <span>RoboMME</span></h3>
+          <strong class="diagnostic-number">90/90</strong>
+          <p>Picked up the same container first in every scene pair across three tasks. The two histories specified different containers.</p>
+        </article>
+        <article class="diagnostic-card">
+          <h3>MemER <span>RoboMME</span></h3>
+          <strong class="diagnostic-number">6/31</strong>
+          <p>Kept the old container in six of the 31 pairs where its first choice had been correct, across the same three tasks.</p>
+        </article>
+      </div>
+      <div class="diagnostic-footer">
+        <p>These tests measure the action the robot takes. The mismatch can arise while storing, retrieving, or using the cue.</p>
+        <a href="#demos">Compare MemoryVLA and MemAlign videos ↓</a>
+      </div>
+    </section>
+
+    <section id="method" class="section method-section" aria-labelledby="method-title">
+      <div class="container">
+        <div class="section-heading">
+          <h2 id="method-title">How MemAlign teaches the robot</h2>
+          <p>MemAlign starts with a robot policy that already knows how to reach and teaches it where to reach when the earlier cue changes.</p>
+        </div>
+        <div class="method-contents">
+          <ol class="method-steps" role="list">
+            <li><h3>Show two versions of the same task</h3><p>Keep the table, instruction and starting pose fixed. Change the earlier cue and show the correct reach for each color.</p></li>
+            <li><h3>Let the remembered cue steer the reach</h3><p>Keep the robot’s existing movement model fixed. Train a small add-on that uses the remembered cue to adjust how the robot moves.</p></li>
+            <li><h3>Check where the block is now</h3><p>For the color tasks, an extra step uses the current camera view to locate the matching block and refine the reach.</p></li>
+          </ol>
+          <div class="training-example">
+            <h3>A training pair</h3>
+            <p>Both examples start the reach from the same scene.</p>
+            <div class="training-pair">
+              <div><span><i class="color-chip green" aria-hidden="true"></i> Saw green earlier</span><span class="training-arrow" aria-hidden="true">→</span><strong>Touch the green block</strong></div>
+              <div><span><i class="color-chip blue" aria-hidden="true"></i> Saw blue earlier</span><span class="training-arrow" aria-hidden="true">→</span><strong>Touch the blue block</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metric-strip container" aria-label="Evaluation highlights">
+      <a href="#results"><span class="metric-value">87.83<span>%</span></span><strong>Controlled MIKASA-Robo</strong><small>Exclusive target completion · baseline 15.00%</small></a>
+      <a href="#results"><span class="metric-value">50.50<span>%</span></span><strong>Original MIKASA-Robo protocol</strong><small>Task success · baseline 39.67%</small></a>
+      <a href="#real-robot"><span class="metric-value">2</span><strong>Real-robot tasks</strong><small>PiPER-X · 10 trials per task and condition</small></a>
+    </section>
+
+    <section id="watch" class="section demo-section" aria-labelledby="watch-title">
+      <div class="container">
+        <div class="section-heading">
+          <h2 id="watch-title">Watch the rollouts</h2>
+          <p>Browse recorded runs from the physical robot and three simulation benchmarks.</p>
+        </div>
+        <nav class="gallery-nav" aria-label="Demo collections">
+          <a href="#real-robot"><span>PiPER-X</span><small>Real robot</small></a>
+          <a href="#demos"><span>MIKASA-Robo</span><small>History swaps</small></a>
+          <a href="#robomme-demos"><span>RoboMME</span><small>Matched scenes</small></a>
+          <a href="#rmbench-demos"><span>RMBench</span><small>Setup validation</small></a>
+        </nav>
+        <section id="real-robot" class="gallery-panel" aria-labelledby="real-robot-title">
+          <h3 id="real-robot-title">Memory on a physical robot</h3>
+          <p class="gallery-intro">Watch PiPER-X follow a vanished color cue or track a target hidden under a cup, with fixed and wrist camera views.</p>
+      <div class="hardware-videos">
+        <figure class="hardware-video">
+          <video controls playsinline preload="none" poster="assets/real-robot/remembercolor3-green.jpg" aria-label="RememberColor3 with the green cue, fixed and wrist camera views"><source src="assets/real-robot/remembercolor3-green.mp4" type="video/mp4"></video>
+          <figcaption><strong>RememberColor3</strong><span>Green cue, 38 s</span></figcaption>
+        </figure>
+        <figure class="hardware-video">
+          <video controls playsinline preload="none" poster="assets/real-robot/shell-left.jpg" aria-label="ShellGameTouch with the target under the left cup, fixed and wrist camera views"><source src="assets/real-robot/shell-left.mp4" type="video/mp4"></video>
+          <figcaption><strong>ShellGameTouch</strong><span>Target under the left cup, 35 s</span></figcaption>
+        </figure>
+      </div>
+      <details class="extra-recordings">
+        <summary>More hardware recordings, including a failure case</summary>
+        <div class="hardware-videos">
+          <figure class="hardware-video">
+            <video controls playsinline preload="none" poster="assets/real-robot/remembercolor3-red.jpg" aria-label="RememberColor3 with the red cue, fixed and wrist camera views"><source src="assets/real-robot/remembercolor3-red.mp4" type="video/mp4"></video>
+            <figcaption><strong>RememberColor3</strong><span>Red cue, 33 s</span></figcaption>
+          </figure>
+          <figure class="hardware-video">
+            <video controls playsinline preload="none" poster="assets/real-robot/remembercolor3-blue.jpg" aria-label="RememberColor3 with the blue cue, fixed and wrist camera views"><source src="assets/real-robot/remembercolor3-blue.mp4" type="video/mp4"></video>
+            <figcaption><strong>RememberColor3</strong><span>Blue cue, 36 s</span></figcaption>
+          </figure>
+          <figure class="hardware-video">
+            <video controls playsinline preload="none" poster="assets/real-robot/remembercolor3-failure.jpg" aria-label="RememberColor3 failure case, fixed and wrist camera views"><source src="assets/real-robot/remembercolor3-failure.mp4" type="video/mp4"></video>
+            <figcaption><strong>RememberColor3 failure case</strong><span>Green cue, 33 s</span></figcaption>
+          </figure>
+          <figure class="hardware-video">
+            <video controls playsinline preload="none" poster="assets/real-robot/shell-center.jpg" aria-label="ShellGameTouch with the target under the center cup, fixed and wrist camera views"><source src="assets/real-robot/shell-center.mp4" type="video/mp4"></video>
+            <figcaption><strong>ShellGameTouch</strong><span>Target under the center cup, 44 s</span></figcaption>
+          </figure>
+        </div>
+      </details>
+        </section>
+        <section id="demos" class="gallery-panel" aria-labelledby="mikasa-demo-title">
+          <h3 id="mikasa-demo-title">What if the earlier cue changes?</h3>
+          <p class="gallery-intro">Compare both policies on the same RememberColor3 scene. The current view stays fixed as you change the earlier cue.</p>
+      <div class="demo-toolbar"><div class="segmented" role="group" aria-label="Video history condition"><button type="button" data-demo="original" aria-pressed="true">Original</button><button type="button" data-demo="replaced" aria-pressed="false">Replaced</button><button type="button" data-demo="erased" aria-pressed="false">Erased</button></div><button class="replay-button" id="replay-demo" type="button"><span aria-hidden="true">▷</span><span>Play both</span></button></div>
+      <div class="demo-videos"><figure><div class="video-label"><span>MemoryVLA</span><span class="mono">RELEASED BASELINE</span></div><video id="baseline-video" controls playsinline preload="none" poster="assets/scene-handover.jpg" aria-label="MemoryVLA recorded RC3 simulation"><source src="assets/baseline-original.mp4" type="video/mp4"></source></video><figcaption><span>Completed object</span><strong id="baseline-target">0</strong></figcaption></figure><figure class="ours-video"><div class="video-label"><span>MemAlign</span><span class="mono">FROZEN RC5 MODEL</span></div><video id="memalign-video" controls playsinline preload="none" poster="assets/scene-handover.jpg" aria-label="MemAlign recorded RC3 simulation"><source src="assets/memalign-original.mp4" type="video/mp4"></source></video><figcaption><span>Completed object</span><strong id="memalign-target">1</strong></figcaption></figure></div>
+      <div class="demo-caption"><p id="demo-explanation" aria-live="polite">Original history specifies target 1. MemAlign completes object 1 only; the baseline completes object 0.</p></div><p class="demo-footnote">In this matched scene (seed 2028500000), current RGB and proprioception stay fixed at handover across all six clips.</p>
+        </section>
+        <section id="robomme-demos" class="gallery-panel" aria-labelledby="robomme-demo-title">
+          <h3 id="robomme-demo-title">Success and failure on RoboMME</h3>
+          <p class="gallery-intro">Released MemER and a pilot counterfactual adaptation start from the same scene and share the same low-level policy in each pair.</p>
+      <h4>BinFill</h4>
+      <p class="benchmark-description">Place a green block in the bin, then press stop. The adapted policy finishes both steps in this scene.</p>
+      <div class="benchmark-videos">
+        <figure class="hardware-video">
+          <video controls playsinline preload="none" poster="assets/benchmarks/robomme-binfill-released.jpg" aria-label="RoboMME BinFill, released MemER, unsuccessful rollout"><source src="assets/benchmarks/robomme-binfill-released.mp4" type="video/mp4"></video>
+          <figcaption><strong>Released MemER</strong><span>Unsuccessful</span></figcaption>
+        </figure>
+        <figure class="hardware-video">
+          <video controls playsinline preload="none" poster="assets/benchmarks/robomme-binfill-cf.jpg" aria-label="RoboMME BinFill, pilot counterfactual adaptation, successful rollout"><source src="assets/benchmarks/robomme-binfill-cf.mp4" type="video/mp4"></video>
+          <figcaption><strong>MemER with pilot CF adaptation</strong><span>Successful</span></figcaption>
+        </figure>
+      </div>
+      <details class="extra-recordings">
+        <summary>SwingXtimes · Regression case</summary>
+        <p class="benchmark-description">Move the block right and left twice, then press the stop button. Released MemER completes the sequence. The adapted policy repeats an earlier counting subgoal and fails to finish.</p>
+        <div class="benchmark-videos">
+          <figure class="hardware-video">
+            <video controls playsinline preload="none" poster="assets/benchmarks/robomme-swingxtimes-released.jpg" aria-label="RoboMME SwingXtimes, released MemER, successful rollout"><source src="assets/benchmarks/robomme-swingxtimes-released.mp4" type="video/mp4"></video>
+            <figcaption><strong>Released MemER</strong><span>Successful</span></figcaption>
+          </figure>
+          <figure class="hardware-video">
+            <video controls playsinline preload="none" poster="assets/benchmarks/robomme-swingxtimes-cf.jpg" aria-label="RoboMME SwingXtimes, pilot counterfactual adaptation, unsuccessful rollout"><source src="assets/benchmarks/robomme-swingxtimes-cf.mp4" type="video/mp4"></video>
+            <figcaption><strong>MemER with pilot CF adaptation</strong><span>Unsuccessful</span></figcaption>
+          </figure>
+        </div>
+      </details>
+        </section>
+        <section id="rmbench-demos" class="gallery-panel" aria-labelledby="rmbench-demo-title">
+          <h3 id="rmbench-demo-title">RMBench setup validation</h3>
+          <p class="gallery-intro">Closed-loop Rearrange and Swap Blocks demos from the native Mem-0 M(1) policy.</p>
+      <div class="benchmark-videos">
+        <figure class="hardware-video">
+          <video controls playsinline preload="none" poster="assets/benchmarks/rmbench-rearrange.jpg" aria-label="RMBench Rearrange, native Mem-0 M(1) setup validation"><source src="assets/benchmarks/rmbench-rearrange.mp4" type="video/mp4"></video>
+          <figcaption><strong>Rearrange</strong><span>Native Mem-0 M(1)</span></figcaption>
+        </figure>
+        <figure class="hardware-video">
+          <video controls playsinline preload="none" poster="assets/benchmarks/rmbench-swap-blocks.jpg" aria-label="RMBench Swap Blocks, native Mem-0 M(1) setup validation"><source src="assets/benchmarks/rmbench-swap-blocks.mp4" type="video/mp4"></video>
+          <figcaption><strong>Swap Blocks</strong><span>Native Mem-0 M(1)</span></figcaption>
+        </figure>
+      </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="results" class="section container" aria-labelledby="results-title">
+      <div class="section-heading">
+        <h2 id="results-title">How well does it work?</h2>
+        <p>Compare MemAlign with MemoryVLA on MIKASA-Robo. The controlled protocol holds the robot still until the cue disappears. The original protocol allows motion while the cue is visible.</p>
+      </div>
+      <div class="results-panel">
+        <div class="chart-top">
+          <div class="segmented" role="group" aria-label="Choose MIKASA-Robo comparison">
+            <button type="button" data-result="controlled" aria-pressed="true">Controlled protocol</button>
+            <button type="button" data-result="benchmark" aria-pressed="false">Original protocol</button>
+            <button type="button" data-result="original" aria-pressed="false">Paired original</button>
+            <button type="button" data-result="replaced" aria-pressed="false">Paired replaced</button>
+          </div>
+          <div class="chart-legend"><span><i class="legend-square baseline"></i>MemoryVLA</span><span><i class="legend-square ours"></i>MemAlign</span></div>
+        </div>
+        <p id="chart-context" class="chart-context">Stationary cue phase · three evaluation blocks · original histories</p>
+        <div id="result-bars" class="result-bars" aria-live="polite"></div>
+        <div class="chart-bottom"><p id="chart-summary">Four-task mean: 15.00 ± 2.00% to 87.83 ± 2.52%</p><span id="chart-metric">Exclusive target completion</span></div>
+      </div>
+      <details class="protocol-details"><summary>Evaluation protocols and paired histories</summary><div><p>In the paired diagnostic, original and replaced histories specify different valid targets. Current RGB, instruction and robot state match at handover, with shared initial sampling noise. The paired chart views use 50 episodes per task and history condition. Erasure removes the identifying cue and uses original-target hits as a diagnostic.</p><p>The three-block standard deviations measure evaluation variation for a fixed trained policy. Under the original protocol, ShellGameTouch falls from 86.67% to 77.33% while all three RememberColor tasks improve.</p></div></details>
+      <details class="protocol-details">
+        <summary>PiPER-X trial outcomes</summary>
+        <div>
+      <div class="table-wrap hardware-table"><table>
+        <caption>Exclusive target completion on hardware (out of 10 trials per task, method, and history condition)</caption>
+        <thead><tr><th scope="col">Task</th><th scope="col">Method</th><th scope="col">Original</th><th scope="col">Replaced</th><th scope="col">Erased<sup>†</sup></th></tr></thead>
+        <tbody>
+          <tr><th scope="rowgroup" rowspan="2">Remember<wbr>Color3</th><td>MemoryVLA</td><td>1/10</td><td>2/10</td><td>1/10</td></tr>
+          <tr><td><strong>MemAlign</strong></td><td class="highlight">5/10</td><td class="highlight">3/10</td><td>1/10</td></tr>
+        </tbody><tbody>
+          <tr><th scope="rowgroup" rowspan="2">ShellGame<wbr>Touch</th><td>MemoryVLA</td><td>4/10</td><td>2/10</td><td>3/10</td></tr>
+          <tr><td><strong>MemAlign</strong></td><td class="highlight">6/10</td><td class="highlight">4/10</td><td>2/10</td></tr>
+        </tbody>
+      </table><p class="table-note">† Erased history removes the cue. Counts in that column report original-target hits for diagnosis.</p></div>
+        </div>
+      </details>
+      <details class="protocol-details">
+        <summary>RoboMME transfer, ablation and inference cost</summary>
+        <div>
+      <div class="broader-results">
+        <h3>Transfer across RoboMME policies</h3>
+        <p>The revised comparison reruns each baseline under the same evaluation protocol as its adapted counterpart, covering all 16 tasks with 50 episodes per task. For MemoryVLA, Reference improves from 5.5% to 14.0%, while Counting finishes at 9.0% against a 9.5% baseline.</p>
+        <div class="table-wrap"><table><caption>RoboMME average task success (%)</caption><thead><tr><th scope="col">Model</th><th scope="col">Baseline</th><th scope="col">+ MemAlign</th><th scope="col">Δ pp</th></tr></thead><tbody><tr><th scope="row">MemoryVLA</th><td>8.25</td><td class="highlight">11.50</td><td>+3.25</td></tr><tr><th scope="row">MemER</th><td>41.87</td><td class="highlight">43.75</td><td>+1.88</td></tr><tr><th scope="row">MME-VLA</th><td>45.38</td><td class="highlight">46.50</td><td>+1.12</td></tr></tbody></table></div>
+        <p>On three container tasks in the paired-history diagnostic, released MME-VLA selects the same target in all 90 scene pairs. Released MemER retains the original target in six pairs.</p>
+      </div>
+      <div class="broader-results">
+        <h3>Matched ablation and inference cost</h3>
+        <p>In the matched ShellGameTouch ablation, the full method completes the correct target under both histories in 84.67% of scenes. With visual rebinding fixed, this drops to 2.67% when history-aware modulation is removed and to 52.00% when counterfactual supervision is removed.</p>
+        <p>On an NVIDIA L40, MemAlign adds approximately 11% latency per 16-step query and 0.8 GiB of peak allocated GPU memory in the RC5 and ShellGameTouch profiling runs.</p>
+      </div>
+      <div class="general-row"><span>Conventional manipulation</span><span>LIBERO <strong>96.25%</strong><small>baseline 96.75%</small></span><span>SIMPLER · Bridge <strong>71.88%</strong><small>baseline 71.88%</small></span></div>
+        </div>
+      </details>
+    </section>
+
+  </main>
+  <footer><div class="container footer-content"><a class="brand" href="#main"><img src="assets/favicon.svg?v=project" width="28" height="28" alt="">MemAlign</a><a href="#main">Back to top ↑</a></div></footer>
+</body>
+</html>
